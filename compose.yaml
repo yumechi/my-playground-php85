@@ -1,0 +1,9 @@
+services:
+  php:
+    image: docker.io/library/php:8.5.3-cli
+    working_dir: /app
+    volumes:
+      - .:/app:Z
+      - ./php.ini:/usr/local/etc/php/conf.d/99-custom.ini:Z
+    stdin_open: true
+    tty: true
