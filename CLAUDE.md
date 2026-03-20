@@ -12,16 +12,6 @@ PHP 8.5.3 (podman compose) でコードゴルフを行うリポジトリ。
 - `make run FILE=other.php` — 別ファイルを指定して実行
 - 標準入力: `echo "入力" | make run`
 
-## スコアルール
-
-- スコア = コード中の全 ASCII 空白文字（スペース、タブ、改行等）を除去した後のバイト数
-- 先頭や末尾に置かれた PHP タグ (`<?php`、`<?`、`?>`) はカウントしない
-
-## コーディング方針
-
-- コードゴルフ用途のため、可読性・安全性よりも短さを優先してよい
-- `error_reporting` は `E_ALL & ~E_WARNING & ~E_NOTICE & ~E_DEPRECATED` に設定済み
-
 ## 利用技術
 
 - PHP 8.5.3-cli (docker.io/library/php:8.5.3-cli)
