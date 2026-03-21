@@ -1,6 +1,6 @@
 # PHP AST 検証環境
 
-PHP 8.1〜8.5 の5バージョンで `php-ast` 拡張を使い、バージョン間の AST 差分を検証する。
+検証目的や背景は [CLAUDE.md](./CLAUDE.md) を参照。
 
 ## セットアップ
 
@@ -8,9 +8,6 @@ PHP 8.1〜8.5 の5バージョンで `php-ast` 拡張を使い、バージョン
 cd ast-testing
 make build
 ```
-
-- PHP 8.1: `pecl install ast`
-- PHP 8.2+: PIE (`pie install nikic/php-ast`)
 
 ## 使い方
 
@@ -26,22 +23,7 @@ make comments-no-comments   # コメントなしコード (比較用)
 
 # 単一バージョン指定
 make run-one VER=php85 FILE=cases/comment_diff.php OPTS=--with-comments
+
+# クリーンアップ
+make clean
 ```
-
-## 検証ケース
-
-### 1. 変数埋め込み echo の deprecated (`cases/deprecated_interpolation.php`)
-
-`"${var}"` 形式が PHP 8.2 で deprecated になった件。以下3パターンの AST 差分を比較する。
-
-- `"${var}"` — PHP 8.2+ で deprecated
-- `"{$var}"` — 推奨形式
-- `"$var"` — 直接埋め込み
-
-### 2. コメント差分 (`cases/comment_diff.php`, `cases/comment_diff_no_comments.php`)
-
-コメント有無による AST の違いを検証する。
-
-- `make comments` — コメントありコードを `--with-comments` なしでダンプ
-- `make comments-with` — コメントありコードを `--with-comments` ありでダンプ
-- `make comments-no-comments` — コメントなしコードをダンプ（比較用）
