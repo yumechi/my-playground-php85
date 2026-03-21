@@ -4,7 +4,7 @@ FROM docker.io/library/php:${PHP_VERSION}-cli
 ARG PHP_VERSION
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc make autoconf libtool pkg-config \
+    gcc make autoconf libtool pkg-config git \
     && rm -rf /var/lib/apt/lists/*
 
 # PHP 8.1: pecl, PHP 8.2+: PIE
