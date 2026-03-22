@@ -19,6 +19,11 @@ RUN if [ "$(echo "${PHP_VERSION}" | cut -d. -f2)" = "1" ]; then \
 
 RUN php -m | grep ast
 
+# nikic/php-ast の util.php (ast_dump 関数)
+RUN mkdir -p /opt/ast-util \
+    && curl -sSL https://raw.githubusercontent.com/nikic/php-ast/master/util.php \
+       -o /opt/ast-util/util.php
+
 # composer + nikic/php-parser (/opt/vendor に配置、ホストマウントで上書きされないように)
 COPY --from=docker.io/library/composer:2 /usr/bin/composer /usr/bin/composer
 COPY composer.json /opt/deps/composer.json

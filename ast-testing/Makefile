@@ -2,14 +2,14 @@ COMPOSE := podman compose
 VERSIONS := php81 php82 php83 php84 php85
 RESULTS  := results
 
-.PHONY: build all interpolation comments comments-no-comments docblock-interpolation parser-comments parser-comments-no-comments parser-interpolation parser-docblock-interpolation hash-compare clean clean-results
+.PHONY: build all interpolation comments comments-no-comments docblock-interpolation docblock-interpolation-exclude parser-comments parser-comments-no-comments parser-interpolation parser-docblock-interpolation hash-compare clean clean-results
 
 # 全イメージをビルド
 build:
 	$(COMPOSE) build
 
 # 全ケースを全バージョンで実行
-all: interpolation comments comments-no-comments docblock-interpolation parser-comments parser-comments-no-comments parser-interpolation parser-docblock-interpolation hash-compare
+all: interpolation comments comments-no-comments docblock-interpolation docblock-interpolation-exclude parser-comments parser-comments-no-comments parser-interpolation parser-docblock-interpolation hash-compare
 
 # --- 変数埋め込み deprecated 検証 ---
 interpolation:
@@ -62,6 +62,19 @@ docblock-interpolation:
 		echo ""; \
 	done
 	@echo "=> $(RESULTS)/docblock-interpolation/ に保存しました"
+
+# --- DocBlock 除外で変数埋め込み検証 ---
+docblock-interpolation-exclude:
+	@mkdir -p $(RESULTS)/docblock-interpolation-exclude
+	@echo "=============================="
+	@echo " DocBlock 変数埋め込み (exclude docComment)"
+	@echo "=============================="
+	@for v in $(VERSIONS); do \
+		$(COMPOSE) run --rm $$v php dump_ast.php cases/docblock_interpolation.php --exclude-doc 2>/dev/null \
+			| tee $(RESULTS)/docblock-interpolation-exclude/$$v.txt; \
+		echo ""; \
+	done
+	@echo "=> $(RESULTS)/docblock-interpolation-exclude/ に保存しました"
 
 # --- nikic/php-parser: コメント差分 (コメントあり) ---
 parser-comments:
@@ -129,7 +142,7 @@ hash-compare:
 	@echo "=> $(RESULTS)/hash-compare/ に保存しました"
 
 # --- 単一バージョンで実行 ---
-# 使い方: make run-one VER=php85 FILE=cases/deprecated_interpolation.php [OPTS=--with-comments]
+# 使い方: make run-one VER=php85 FILE=cases/deprecated_interpolation.php
 run-one:
 	$(COMPOSE) run --rm $(VER) php dump_ast.php $(FILE) $(OPTS)
 

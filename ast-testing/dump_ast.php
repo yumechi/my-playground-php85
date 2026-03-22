@@ -1,12 +1,14 @@
 <?php
 
+require '/opt/ast-util/util.php';
+
 if ($argc < 2) {
-    fprintf(STDERR, "Usage: php dump_ast.php <file> [--with-comments]\n");
+    fprintf(STDERR, "Usage: php dump_ast.php <file> [--exclude-doc]\n");
     exit(1);
 }
 
 $file = $argv[1];
-$withComments = in_array('--with-comments', $argv, true);
+$excludeDoc = in_array('--exclude-doc', $argv, true);
 
 if (!file_exists($file)) {
     fprintf(STDERR, "File not found: %s\n", $file);
@@ -20,11 +22,12 @@ echo "=== PHP " . PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION . " ===\n";
 echo "ast extension version: " . phpversion('ast') . "\n";
 echo "AST version: " . $version . "\n";
 echo "File: " . $file . "\n";
-if ($withComments) {
-    echo "Comments: NOT SUPPORTED in ast " . phpversion('ast') . "\n";
+if ($excludeDoc) {
+    echo "Mode: EXCLUDE_DOC_COMMENT\n";
 }
 echo str_repeat("-", 60) . "\n\n";
 
+// 自前ダンプ: 全ノードをそのまま出力
 function dump_ast_node(ast\Node|string|int|float|null $node, int $indent = 0): string {
     $prefix = str_repeat("  ", $indent);
     if ($node === null) {
@@ -56,7 +59,17 @@ function dump_ast_node(ast\Node|string|int|float|null $node, int $indent = 0): s
 
 try {
     $ast = ast\parse_code($code, $version);
+
+    echo "[custom dump]\n";
     echo dump_ast_node($ast);
+    echo "\n";
+
+    $options = AST_DUMP_LINENOS;
+    if ($excludeDoc) {
+        $options |= AST_DUMP_EXCLUDE_DOC_COMMENT;
+    }
+    echo "[ast_dump" . ($excludeDoc ? " (exclude docComment)" : "") . "]\n";
+    echo ast_dump($ast, $options) . "\n";
 } catch (ParseError $e) {
     echo "ParseError: " . $e->getMessage() . "\n";
 } catch (CompileError $e) {
