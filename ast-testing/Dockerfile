@@ -19,4 +19,9 @@ RUN if [ "$(echo "${PHP_VERSION}" | cut -d. -f2)" = "1" ]; then \
 
 RUN php -m | grep ast
 
+# composer + nikic/php-parser (/opt/vendor に配置、ホストマウントで上書きされないように)
+COPY --from=docker.io/library/composer:2 /usr/bin/composer /usr/bin/composer
+COPY composer.json /opt/deps/composer.json
+RUN cd /opt/deps && composer install --no-dev --no-interaction --prefer-dist
+
 WORKDIR /app
