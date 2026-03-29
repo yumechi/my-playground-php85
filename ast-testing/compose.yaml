@@ -1,0 +1,43 @@
+x-common: &common
+  build:
+    context: .
+    dockerfile: Dockerfile
+  volumes:
+    - .:/app:ro
+  working_dir: /app
+
+services:
+  php81:
+    <<: *common
+    build:
+      context: .
+      args:
+        PHP_VERSION: "8.1"
+
+  php82:
+    <<: *common
+    build:
+      context: .
+      args:
+        PHP_VERSION: "8.2"
+
+  php83:
+    <<: *common
+    build:
+      context: .
+      args:
+        PHP_VERSION: "8.3"
+
+  php84:
+    <<: *common
+    build:
+      context: .
+      args:
+        PHP_VERSION: "8.4"
+
+  php85:
+    <<: *common
+    build:
+      context: .
+      args:
+        PHP_VERSION: "8.5"
